@@ -34,3 +34,19 @@ Assume we have a user account at /home/username
             source
             virtualenv
             static
+
+## Some tips (BUG: also need to substitute username!)
+
+sed "s/SITENAME/ACTUAL_NAME/g" \
+    deploy_tools/nginx.template.conf | sudo tee \
+    /etc/nginx/sites-available/ACTUAL_NAME
+
+ln -s ../sites-available/ACTUAL_NAME \
+    /etc/nginx/sites-enables/ACTUAL_NAME
+
+sed "s/SITENAME/ACTUAL_NAME/g" \
+    deploy_tools/gunicorn-upstart.template.conf | sudo tee \
+    /etc/init/gunicorn-ACTUAL_NAME.conf
+
+service nginx reload
+start gunicorn-ACTUAL_NAME
