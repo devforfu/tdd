@@ -1,5 +1,6 @@
 from unittest import TestCase
 
+from lists.models import List, Item
 from lists.forms import ItemForm, EMPTY_LIST_ERROR
 
 
@@ -15,3 +16,11 @@ class ItemFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors['text'], [EMPTY_LIST_ERROR])
+
+    def test_form_save_handles_saving_to_a_list(self):
+        ls = List.objects.create()
+        form = ItemForm(data={'text': 'do me'})
+        new_item = form.save(for_list=ls)
+        self.assertEqual(new_item, Item.objects.first())
+        self.assertEqual(new_item.text, 'do me')
+        self.assertEqual(new_item.list, ls)
